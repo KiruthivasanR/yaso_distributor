@@ -1,0 +1,42 @@
+{
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "yasodha-app-backend",
+          "appId": "1:234598193617:android:b45897b7d6e9709e2c28f0",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "yasodha-app-backend",
+          "configurations": {
+            "android": "1:234598193617:android:b45897b7d6e9709e2c28f0",
+            "ios": "1:234598193617:ios:c166e1703419bf272c28f0",
+            "macos": "1:234598193617:ios:c166e1703419bf272c28f0",
+            "web": "1:234598193617:web:a9de8ec2bddcce5c2c28f0",
+            "windows": "1:234598193617:web:7a4e5cce5e008c3b2c28f0"
+          }
+        }
+      }
+    }
+  },
+  "hosting": [
+    {
+      "target": "distributor",
+      "public": "build/web",
+      "ignore": [
+        "firebase.json",
+        "**/.*",
+        "**/node_modules/**"
+      ],
+      "rewrites": [
+        {
+          "source": "**",
+          "destination": "/index.html"
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "projects": {
+    "default": "yasodha-app-backend"
+  },
+  "targets": {
+    "yasodha-app-backend": {
+      "hosting": {
+        "distributor": [
+          "yashodha-distributor"
+        ]
+      }
+    }
+  },
+  "etags": {}
+}
