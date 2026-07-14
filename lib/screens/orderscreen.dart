@@ -70,28 +70,41 @@ double getProductsTotal(
 
     double qty = 0;
 
-    variants.forEach((variant, count) {
+   variants.forEach((variant, count) {
 
-      if (variant == "250ml" ||
-          variant == "250g") {
-        qty += (250 * count) / 1000;
-      }
+  if (variant == "100ml" || variant == "100g") {
+    qty += (100 * count) / 1000;
+  }
 
-      else if (variant == "500ml" ||
-          variant == "500g") {
-        qty += (500 * count) / 1000;
-      }
+  else if (variant == "250ml" || variant == "250g") {
+    qty += (250 * count) / 1000;
+  }
 
-      else if (variant == "1L" ||
-          variant == "1kg") {
-        qty += count.toDouble();
-      }
-    });
+  else if (variant == "500ml" || variant == "500g") {
+    qty += (500 * count) / 1000;
+  }
 
-    final rate =
-        getRate(qty, product);
+  else if (variant == "1L" || variant == "1kg") {
+    qty += count.toDouble();
+  }
 
-    total += qty * rate;
+});
+
+   double rate = getRate(qty, product);
+
+double extraCharge = 0;
+
+variants.forEach((variant, count) {
+  if ((product["name"] ?? "")
+          .toString()
+          .toLowerCase()
+          .contains("ghee") &&
+      variant == "100ml") {
+    extraCharge += 5 * count;
+  }
+});
+
+final total = (qty * rate) + extraCharge;
   }
 
   return total;
@@ -551,7 +564,7 @@ if (!snapshot.hasData) {
   gridDelegate:
       SliverGridDelegateWithFixedCrossAxisCount(
     crossAxisCount: isMobile ? 1 : 2,
-    childAspectRatio: isMobile ? 0.75 : 1.2,
+    childAspectRatio: isMobile ? 0.75 : 1.0,
     crossAxisSpacing: 15,
     mainAxisSpacing: 15,
   ),
@@ -569,27 +582,38 @@ double qty = 0;
 
 variants.forEach((variant, count) {
 
-  if (variant == "250ml" ||
-      variant == "250g") {
+  if (variant == "100ml" || variant == "100g") {
+    qty += (100 * count) / 1000;
+  }
+
+  else if (variant == "250ml" || variant == "250g") {
     qty += (250 * count) / 1000;
   }
 
-  else if (variant == "500ml" ||
-      variant == "500g") {
+  else if (variant == "500ml" || variant == "500g") {
     qty += (500 * count) / 1000;
   }
 
-  else if (variant == "1L" ||
-      variant == "1kg") {
+  else if (variant == "1L" || variant == "1kg") {
     qty += count.toDouble();
+  }
+
+});
+double rate = getRate(qty, product);
+
+double extraCharge = 0;
+
+variants.forEach((variant, count) {
+  if ((product["name"] ?? "")
+          .toString()
+          .toLowerCase()
+          .contains("ghee") &&
+      variant == "100ml") {
+    extraCharge += 5 * count;
   }
 });
 
-final rate =
-    getRate(qty, product);
-
-final total =
-    qty * rate;
+final total = (qty * rate) + extraCharge;
 
                return Container(
   decoration: BoxDecoration(
@@ -607,142 +631,140 @@ final total =
   ),
   child: Padding(
     padding: const EdgeInsets.all(12),
-    child: SingleChildScrollView(
-      child: Column(
-        children: [
-
-          SizedBox(
-            height: 140,
-            child: Image.network(
-              product["imageUrl"] ?? "",
-              fit: BoxFit.contain,
-              errorBuilder:
-                  (context, error, stackTrace) {
-                return const Icon(
-                  Icons.image_not_supported,
-                  size: 80,
-                );
-              },
-            ),
-          ),
-
-                          const SizedBox(height: 10),
-
-                          Text(
-                            product["name"] ?? "",
-                            style:
-                                const TextStyle(
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-
-                          Text(
-                            product["unit"] ?? "",
-                          ),
-
-                          const SizedBox(height: 10),
-
-...(product["variants"] ?? [])
-    .map<Widget>((variant) {
-
-  final qty =
-      variantQuantities[doc.id]?[variant] ?? 0;
-
-  return Padding(
-    padding:
-        const EdgeInsets.only(bottom: 8),
-    child: Row(
+    child: Column(
       children: [
-
-        Expanded(
-          child: Text(
-            variant,
-            style: const TextStyle(
-              fontWeight:
-                  FontWeight.w600,
-            ),
+    
+        SizedBox(
+          height: 80,
+          child: Image.network(
+            product["imageUrl"] ?? "",
+            fit: BoxFit.contain,
+            errorBuilder:
+                (context, error, stackTrace) {
+              return const Icon(
+                Icons.image_not_supported,
+                size: 80,
+              );
+            },
           ),
         ),
-
-        IconButton(
-          onPressed: () {
-            setState(() {
-
-              variantQuantities
-                  .putIfAbsent(
-                    doc.id,
-                    () => {},
-                  );
-
-              if (qty > 0) {
-                variantQuantities[
-                    doc.id]![variant] =
-                    qty - 1;
-              }
-            });
-          },
-          icon:
-              const Icon(
-  Icons.remove_circle,
-  color: Colors.redAccent,
-)
-        ),
-
-        Text(
-          qty.toString(),
-          style:
-              const TextStyle(
-            fontSize: 18,
+    
+                        const SizedBox(height: 10),
+    
+                        Text(
+                          product["name"] ?? "",
+                          style:
+                              const TextStyle(
+                            fontWeight:
+                                FontWeight.bold,
+                          ),
+                        ),
+    
+                        Text(
+                          product["unit"] ?? "",
+                        ),
+    
+                        const SizedBox(height: 10),
+    
+    ...(product["variants"] ?? [])
+        .map<Widget>((variant) {
+    
+      final qty =
+    variantQuantities[doc.id]?[variant] ?? 0;
+    
+      return Padding(
+        padding:
+      const EdgeInsets.only(bottom: 8),
+        child: Row(
+    children: [
+    
+      Expanded(
+        child: Text(
+          variant,
+          style: const TextStyle(
             fontWeight:
-                FontWeight.bold,
+                FontWeight.w600,
           ),
         ),
-
-        IconButton(
-          onPressed: () {
-            setState(() {
-
-              variantQuantities
-                  .putIfAbsent(
-                    doc.id,
-                    () => {},
-                  );
-
+      ),
+    
+      IconButton(
+        onPressed: () {
+          setState(() {
+    
+            variantQuantities
+                .putIfAbsent(
+                  doc.id,
+                  () => {},
+                );
+    
+            if (qty > 0) {
               variantQuantities[
-                      doc.id]![variant] =
-                  qty + 1;
-            });
-          },
-          icon:
-             const Icon(
-  Icons.add_circle,
-  color: Color(0xff1B5E20),
-)
+                  doc.id]![variant] =
+                  qty - 1;
+            }
+          });
+        },
+        icon:
+            const Icon(
+      Icons.remove_circle,
+      color: Colors.redAccent,
+    )
+      ),
+    
+      Text(
+        qty.toString(),
+        style:
+            const TextStyle(
+          fontSize: 18,
+          fontWeight:
+              FontWeight.bold,
         ),
-      ],
+      ),
+    
+      IconButton(
+        onPressed: () {
+          setState(() {
+    
+            variantQuantities
+                .putIfAbsent(
+                  doc.id,
+                  () => {},
+                );
+    
+            variantQuantities[
+                    doc.id]![variant] =
+                qty + 1;
+          });
+        },
+        icon:
+           const Icon(
+      Icons.add_circle,
+      color: Color(0xff1B5E20),
+    )
+      ),
+    ],
+        ),
+      );
+    }).toList(),
+    
+                        const SizedBox(height: 10),
+    Text(
+      "Qty : ${qty.toStringAsFixed(2)} ${product["unit"]}",
     ),
-  );
-}).toList(),
-
-                          const SizedBox(height: 10),
-Text(
-  "Qty : ${qty.toStringAsFixed(2)} ${product["unit"]}",
-),
-                          Text(
-                            "Rate : ₹${rate.toStringAsFixed(2)}",
+                        Text(
+                          "Rate : ₹${rate.toStringAsFixed(2)}",
+                        ),
+    
+                        Text(
+                          "Total : ₹${total.toStringAsFixed(2)}",
+                          style:
+                              const TextStyle(
+                            fontWeight:
+                                FontWeight.bold,
                           ),
-
-                          Text(
-                            "Total : ₹${total.toStringAsFixed(2)}",
-                            style:
-                                const TextStyle(
-                              fontWeight:
-                                  FontWeight.bold,
-                            ),
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
   ),
                   );
@@ -945,18 +967,40 @@ if (variants.isEmpty) continue;
 double qty = 0;
 
 variants.forEach((variant, count) {
-  if (variant == "250ml" || variant == "250g") {
+
+  if (variant == "100ml" || variant == "100g") {
+    qty += (100 * count) / 1000;
+  }
+
+  else if (variant == "250ml" || variant == "250g") {
     qty += (250 * count) / 1000;
-  } else if (variant == "500ml" || variant == "500g") {
+  }
+
+  else if (variant == "500ml" || variant == "500g") {
     qty += (500 * count) / 1000;
-  } else if (variant == "1L" || variant == "1kg") {
+  }
+
+  else if (variant == "1L" || variant == "1kg") {
     qty += count.toDouble();
+  }
+
+});
+
+double rate = getRate(qty, product);
+
+double extraCharge = 0;
+
+variants.forEach((variant, count) {
+  if ((product["name"] ?? "")
+          .toString()
+          .toLowerCase()
+          .contains("ghee") &&
+      variant == "100ml") {
+    extraCharge += 5 * count;
   }
 });
 
-final rate = getRate(qty, product);
-
-final total = qty * rate;
+final total = (qty * rate) + extraCharge;
 
       productTotal += total;
 
@@ -967,6 +1011,7 @@ final total = qty * rate;
   "quantity": qty,
   "variants": variants,
   "rate": rate,
+   "extraCharge": extraCharge,
   "total": total,
 });
     }
